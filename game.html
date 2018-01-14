@@ -14,11 +14,11 @@
     <script>
     var log = console.log.bind(console)
 
-// 重构的笔记
-// 1.函数的入口之能有一个，不能把变量什么的放在最外面
-// 2.相关性比较高的东西，比如关于paddle的变量和函数，都应该放在一起
-// 3.事件绑定相关的也应该有自己的函数
-// 4.setInterval也应该用一个函数包装起来
+    // 重构的笔记
+    // 1.函数的入口之能有一个，不能把变量什么的放在最外面
+    // 2.相关性比较高的东西，比如关于paddle的变量和函数，都应该放在一起
+    // 3.事件绑定相关的也应该有自己的函数
+    // 4.setInterval也应该用一个函数包装起来
 
     var imageFromPath = function (path) {
         var img = new Image()
@@ -29,23 +29,28 @@
     var Paddle = function () {
         var image = imageFromPath('paddle.png')
         var o = {
-            image: ;
-
+            image: image,
+            x: 100,
+            y: 200,
+            speed: 5,
         }
+
+        o.moveLeft = function () {
+            o.x -= o.speed
+        }
+
+        o.moveRight = function () {
+            o.x += o.speed
+        }
+
         return o
     }
+
     var __main = () => {
         var canvas = document.querySelector('#id-canvas')
         var ctx = canvas.getContext('2d')
 
-        var x = 100
-        var y = 200
-        var speed = 5
-        var img = new Image()
-        img.src = 'paddle.png'
-        img.onload = function () {
-            ctx.drawImage(img, x, y)
-        }
+        var paddle = Paddle()
 
         var leftDown = false
         var rightDown = false
@@ -70,18 +75,24 @@
             }
         })
 
+        // 应该把这个整体封装成一个和paddle无关的功能
         setInterval(function () {
             //update x
             if (leftDown) {
-                x -= speed
+                paddle.moveLeft()
+                // paddle自己的逻辑应该放到padde的里面去
+                // 不应该放在外面让你来写
+                // paddle和外面的update就纠缠在一起了
+                // paddle.x -= paddle.speed
             } else if (rightDown) {
-                x += speed
+                paddle.moveRight()
+                // paddle.x += paddle.speed
             }
             //clamp X
 
             //draw
             ctx.clearRect(0, 0, canvas.width, canvas.height)
-            ctx.drawImage(img, x, y)
+            ctx.drawImage(paddle.image, paddle.x, paddle.y)
         }, 1000 / 30);
     }
 
