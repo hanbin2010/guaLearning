@@ -46,15 +46,34 @@
         return o
     }
 
-    var __main = () => {
+    var GuaGame = function () {
+        var g = {}
         var canvas = document.querySelector('#id-canvas')
         var ctx = canvas.getContext('2d')
+        g.canvas = canvas
+        g.ctx = ctx
 
+        setInterval(function () {
+            //update
+            g.update()
+            //draw
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            g.draw()
+        }, 1000/30);
+
+        return g
+    }
+
+    var __main = () => {
+        var game = GuaGame()
         var paddle = Paddle()
 
         var leftDown = false
         var rightDown = false
+
         //events
+        // 事件写在这里也很恶心
+        // 如果有十个事件，岂不是要写一大坨
         window.addEventListener('keydown', function (event) {
             log("keydown")
             var k = event.key
@@ -75,25 +94,21 @@
             }
         })
 
-        // 应该把这个整体封装成一个和paddle无关的功能
-        setInterval(function () {
-            //update x
+        game.update = function () {
             if (leftDown) {
                 paddle.moveLeft()
-                // paddle自己的逻辑应该放到padde的里面去
-                // 不应该放在外面让你来写
-                // paddle和外面的update就纠缠在一起了
-                // paddle.x -= paddle.speed
             } else if (rightDown) {
                 paddle.moveRight()
-                // paddle.x += paddle.speed
             }
-            //clamp X
 
+        }
+
+        game.draw = function () {
             //draw
-            ctx.clearRect(0, 0, canvas.width, canvas.height)
-            ctx.drawImage(paddle.image, paddle.x, paddle.y)
-        }, 1000 / 30);
+            //但是以下这个写法也太恶心了
+            // 希望能够写成这样的 game.draw(paddle)
+            game.ctx.drawImage(paddle.image, paddle.x, paddle.y)
+        }
     }
 
     __main()
