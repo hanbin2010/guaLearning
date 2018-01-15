@@ -52,6 +52,7 @@
             }
             return false
         }
+
         return o
     }
 
@@ -61,8 +62,8 @@
             image: image,
             x: 100,
             y: 200,
-            speedX: 10,
-            speedY: 10,
+            speedX: 5,
+            speedY: 5,
             fired: false,
         }
 
@@ -84,6 +85,38 @@
                 o.x += o.speedX
                 o.y += o.speedY
             }
+        }
+
+        return o
+    }
+
+    var aInb = function (a, b) {
+        var o = a
+        if (b.y > o.y && b.y < o.y + o.image.height ) {
+            if (b.x > o.x && b.x < o.x + o.image.width ) {
+                log("collide")
+                return true
+            }
+        }
+        return false
+    }
+    var Block = function () {
+        var image = imageFromPath('block.png')
+        var o = {
+            image: image,
+            x: 100,
+            y: 100,
+            w: 50,
+            h: 20,
+            alive: true,
+        }
+
+        o.kill = function () {
+            o.alive = false
+        }
+
+        o.collide = function (b) {
+            return aInb(o, b) || aInb(b, o)
         }
 
         return o
@@ -136,7 +169,7 @@
             //draw
             ctx.clearRect(0, 0, canvas.width, canvas.height)
             g.draw()
-        }, 1000/30);
+        }, 1000 / 60);
 
         return g
     }
@@ -145,6 +178,7 @@
         var game = GuaGame()
         var paddle = Paddle()
         var ball = Ball()
+        var block = Block()
         //ball和paddle其实很类似
 
         game.registerAction('a', function () {
@@ -166,6 +200,11 @@
                 // 这里也应该用一个ball.反弹()
                 ball.speedY *= -1
             }
+
+            if (block.collide(ball)) {
+                log("球与砖块相撞")
+                block.kill()
+            }
         }
 
         game.draw = function () {
@@ -174,6 +213,11 @@
             // 希望能够写成这样的 game.draw(paddle)
             game.drawImage(paddle)
             game.drawImage(ball)
+
+            // draw block
+            if (block.alive) {
+                game.drawImage(block)
+            }
         }
     }
 
