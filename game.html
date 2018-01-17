@@ -15,6 +15,7 @@
     <script src="paddle.js"></script>
     <script src="ball.js"></script>
     <script src="block.js"></script>
+    <script src="utils.js"></script>
     <script>
     var log = console.log.bind(console)
 
@@ -24,11 +25,10 @@
     // 3.事件绑定相关的也应该有自己的函数
     // 4.setInterval也应该用一个函数包装起来
 
-    var imageFromPath = function (path) {
-        var img = new Image()
-        img.src = path
-        return img
-    }
+    // 复杂的程序
+    // 拆成很多部件
+    //不会出现上下滚滚滚不知道了
+    //困难的东西分解成简单的
 
     var __main = () => {
         var game = GuaGame(30)
